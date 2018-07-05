@@ -1,7 +1,6 @@
 package userController
 
 import (
-	"errors"
 	"net/http"
 
 	user "github.com/amiralii/goEchoExample/aggregates/user/model"
@@ -12,11 +11,11 @@ import (
 func NewUser(e echo.Context) error {
 	u := new(user.User)
 	if err := e.Bind(u); err != nil {
-		return errors.New("error")
+		return &echo.HTTPError{Code: http.StatusInternalServerError, Message: err.Error}
 	}
 	err := Repo.NewUser(*u)
 	if err != nil {
-		return errors.New("error on create user")
+		return err
 	}
 	return e.JSON(http.StatusCreated, "user created")
 }
@@ -24,7 +23,7 @@ func NewUser(e echo.Context) error {
 func FindUser(e echo.Context) error {
 	u := new(user.User)
 	if err := e.Bind(u); err != nil {
-		return errors.New("error")
+		return &echo.HTTPError{Code: http.StatusInternalServerError, Message: err.Error}
 	}
 	if u.Username == "" || u.Password == "" {
 		return &echo.HTTPError{Code: http.StatusBadRequest, Message: "invalid username or password"}

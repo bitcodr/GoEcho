@@ -1,7 +1,6 @@
 package userRepository
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -18,15 +17,14 @@ func NewUser(u user.User) error {
 	db := config.DB{}
 	session, err := db.DBDial()
 	if err != nil {
-		return errors.New("database connection error")
+		return &echo.HTTPError{Code: http.StatusInternalServerError, Message: "Error on connecting to database"}
 	}
 	defer session.Close()
 	collection := session.DB(db.DBName()).C(user.UserCollection)
 
 	err = collection.Insert(u)
-
 	if err != nil {
-		return errors.New("error on create new user")
+		return &echo.HTTPError{Code: http.StatusInternalServerError, Message: "error to create new user"}
 	}
 	return err
 }
@@ -36,7 +34,7 @@ func FindUser(username string, password string) (user.User, error) {
 	u := user.User{}
 	session, err := db.DBDial()
 	if err != nil {
-		return u, errors.New("database connection error")
+		return u, &echo.HTTPError{Code: http.StatusInternalServerError, Message: "Error on connecting to database"}
 	}
 	defer session.Close()
 	collection := session.DB(db.DBName()).C(user.UserCollection)

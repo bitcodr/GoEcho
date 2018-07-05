@@ -15,7 +15,7 @@ func (db *DB) DBDial() (s *mgo.Session, err error) {
 }
 
 func (db *DB) DBName() string {
-	return "goEchoExample"
+	return "echoTest"
 }
 
 func dbURL() string {

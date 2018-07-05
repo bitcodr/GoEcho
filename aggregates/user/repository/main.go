@@ -2,6 +2,11 @@ package userRepository
 
 import (
 	"errors"
+	"net/http"
+
+	"github.com/labstack/echo"
+
+	"github.com/globalsign/mgo"
 
 	"github.com/globalsign/mgo/bson"
 
@@ -38,7 +43,10 @@ func FindUser(username string, password string) (user.User, error) {
 
 	err = collection.Find(bson.M{"username": username, "password": password}).One(&u)
 	if err != nil {
-		return u, errors.New("error on find user")
+		if err == mgo.ErrNotFound {
+			return u, &echo.HTTPError{Code: http.StatusUnauthorized, Message: "invalid username or password"}
+		}
+		return u, err
 	}
 	return u, err
 }

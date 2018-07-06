@@ -1,48 +1,47 @@
 package userRepository
 
 import (
-	"net/http"
-
-	"github.com/labstack/echo"
+	"os"
 
 	"github.com/globalsign/mgo"
 
 	"github.com/globalsign/mgo/bson"
 
 	user "github.com/amiralii/goEchoExample/aggregates/user/model"
-	"github.com/amiralii/goEchoExample/config"
+	"github.com/amiralii/goEchoExample/config/database"
+	"github.com/amiralii/goEchoExample/config/response"
 )
 
 func NewUser(u user.User) error {
-	db := config.DB{}
-	session, err := db.DBDial()
+	db := database.DB{}
+	session, err := db.Connect()
 	if err != nil {
-		return &echo.HTTPError{Code: http.StatusInternalServerError, Message: "Error on connecting to database"}
+		return response.Error("Error on connecting to database", 1002)
 	}
 	defer session.Close()
-	collection := session.DB(db.DBName()).C(user.UserCollection)
+	collection := session.DB(os.Getenv("MONGO_DATABASE")).C(user.UserCollection)
 
 	err = collection.Insert(u)
 	if err != nil {
-		return &echo.HTTPError{Code: http.StatusInternalServerError, Message: "error to create new user"}
+		return response.Error("error to create new user", 1003)
 	}
 	return err
 }
 
 func FindUser(username string, password string) (user.User, error) {
-	db := config.DB{}
+	db := database.DB{}
 	u := user.User{}
-	session, err := db.DBDial()
+	session, err := db.Connect()
 	if err != nil {
-		return u, &echo.HTTPError{Code: http.StatusInternalServerError, Message: "Error on connecting to database"}
+		return u, response.Error("Error on connecting to database", 1002)
 	}
 	defer session.Close()
-	collection := session.DB(db.DBName()).C(user.UserCollection)
+	collection := session.DB(os.Getenv("MONGO_DATABASE")).C(user.UserCollection)
 
 	err = collection.Find(bson.M{"username": username, "password": password}).One(&u)
 	if err != nil {
 		if err == mgo.ErrNotFound {
-			return u, &echo.HTTPError{Code: http.StatusUnauthorized, Message: "invalid username or password"}
+			return u, response.Error("invalid credtional", 1004)
 		}
 		return u, err
 	}

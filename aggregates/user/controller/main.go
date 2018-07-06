@@ -8,11 +8,9 @@ import (
 	"github.com/labstack/echo"
 )
 
-func NewUser(e echo.Context) error {
+func Signup(e echo.Context) error {
 	u := new(user.User)
-	if err := e.Bind(u); err != nil {
-		return &echo.HTTPError{Code: http.StatusInternalServerError, Message: err.Error}
-	}
+	e.Bind(u)
 	err := Repo.NewUser(*u)
 	if err != nil {
 		return err
@@ -20,11 +18,9 @@ func NewUser(e echo.Context) error {
 	return e.JSON(http.StatusCreated, "user created")
 }
 
-func FindUser(e echo.Context) error {
+func Signin(e echo.Context) error {
 	u := new(user.User)
-	if err := e.Bind(u); err != nil {
-		return &echo.HTTPError{Code: http.StatusInternalServerError, Message: err.Error}
-	}
+	e.Bind(u)
 	if u.Username == "" || u.Password == "" {
 		return &echo.HTTPError{Code: http.StatusBadRequest, Message: "invalid username or password"}
 	}

@@ -7,7 +7,7 @@ import (
 
 func Init(e *echo.Echo) {
 
-	e.Group("api/v1_0/users")
+	e.Group("/api/v1_0/users")
 	{
 		e.POST("/signup", user.Signup)
 		e.POST("/signin", user.Signin)

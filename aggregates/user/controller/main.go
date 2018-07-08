@@ -3,6 +3,8 @@ package userController
 import (
 	"net/http"
 
+	"github.com/amiralii/goEchoExample/config/response"
+
 	user "github.com/amiralii/goEchoExample/aggregates/user/model"
 	Repo "github.com/amiralii/goEchoExample/aggregates/user/repository"
 	"github.com/labstack/echo"
@@ -11,11 +13,11 @@ import (
 func Signup(e echo.Context) error {
 	u := new(user.User)
 	e.Bind(u)
-	err := Repo.NewUser(*u)
+	err := Repo.Signup(*u)
 	if err != nil {
 		return err
 	}
-	return e.JSON(http.StatusCreated, "user created")
+	return response.Created(e, "user created")
 }
 
 func Signin(e echo.Context) error {
@@ -24,9 +26,9 @@ func Signin(e echo.Context) error {
 	if u.Username == "" || u.Password == "" {
 		return &echo.HTTPError{Code: http.StatusBadRequest, Message: "invalid username or password"}
 	}
-	response, err := Repo.FindUser(u.Username, u.Password)
+	data, err := Repo.FindUser(u.Username, u.Password)
 	if err != nil {
 		return err
 	}
-	return e.JSON(http.StatusOK, response)
+	return response.Ok(e, data)
 }

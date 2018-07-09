@@ -1,15 +1,18 @@
 package response
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo"
 )
 
 type errorMessage struct {
-	message   map[string]string
-	errorCode map[string]int
+	Message   string `json:"message"`
+	ErrorCode int    `json:"code"`
+}
+
+type errorResponse struct {
+	error errorMessage
 }
 
 type created struct {
@@ -26,7 +29,6 @@ func Ok(e echo.Context, data interface{}) error {
 }
 
 func Error(text string, code int) error {
-	response := &errorMessage{map[string]string{"message": text}, map[string]int{"errorCode": code}}
-	fmt.Println(response)
-	return &echo.HTTPError{Code: http.StatusUnprocessableEntity, Message: response}
+	response := &errorResponse{errorMessage{Message: text, ErrorCode: code}}
+	return &echo.HTTPError{Code: http.StatusUnprocessableEntity, Message: response.error}
 }

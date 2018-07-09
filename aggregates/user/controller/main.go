@@ -12,7 +12,12 @@ import (
 
 func Signup(e echo.Context) error {
 	u := new(user.User)
-	e.Bind(u)
+	if err := e.Bind(u); err != nil {
+		return err
+	}
+	if err := e.Validate(u); err != nil {
+		return response.Error(err.Error(), 422)
+	}
 	err := Repo.Signup(*u)
 	if err != nil {
 		return err

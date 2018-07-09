@@ -7,10 +7,10 @@ import (
 
 func Init(e *echo.Echo) {
 
-	e.Group("/api/v1_0/users")
+	route := e.Group("/api/v1_0/users")
 	{
-		e.POST("/signup", user.Signup)
-		e.POST("/signin", user.Signin)
+		route.POST("/signup", user.Signup)
+		route.POST("/signin", user.Signin)
 		// e.DELETE("/signout", user.Signout)
 		// e.POST("/forgot", user.ForgotPassword)
 		// e.POST("/resert", user.ResetPassword)

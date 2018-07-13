@@ -1,7 +1,7 @@
-package userRoute
+package route
 
 import (
-	user "github.com/amiralii/goEchoExample/services/user/application/controller"
+	user "github.com/amiralii/goEchoExample/context/user/application/controller"
 	"github.com/labstack/echo"
 )
 

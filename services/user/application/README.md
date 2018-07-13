@@ -1,1 +1,0 @@
-Where we have our implementation details (Database connections, Queues, External services)

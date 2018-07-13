@@ -1,4 +1,4 @@
-package userRepository
+package repository
 
 import (
 	"github.com/globalsign/mgo"
@@ -7,10 +7,10 @@ import (
 
 	"github.com/amiralii/goEchoExample/config/database"
 	"github.com/amiralii/goEchoExample/config/response"
-	user "github.com/amiralii/goEchoExample/services/user/domain/model"
+	user "github.com/amiralii/goEchoExample/context/user/domain/model"
 )
 
-func Save(u user.UserSingup) error {
+func Save(u user.User) error {
 	collection, _ := database.Init(user.UserCollection)
 	err := collection.Insert(u)
 	if err != nil {
@@ -19,9 +19,9 @@ func Save(u user.UserSingup) error {
 	return err
 }
 
-func Get(username string, password string) (user.UserSignin, error) {
+func GetByCredential(username string, password string) (user.User, error) {
 	collection, _ := database.Init(user.UserCollection)
-	u := user.UserSignin{}
+	u := user.User{}
 	err := collection.Find(bson.M{"username": username, "password": password}).One(&u)
 	if err != nil {
 		if err == mgo.ErrNotFound {
